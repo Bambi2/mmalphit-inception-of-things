@@ -15,3 +15,16 @@ curl -sfL https://get.k3s.io | \
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 until kubectl get nodes >/dev/null 2>&1; do sleep 2; done
 kubectl apply -f /vagrant/confs/
+
+# `vagrant up` finishing only means this script finished — the cluster
+# keeps converging afterward (Traefik installs via a Helm job and takes
+# ~1 min to bind port 80, pods pull images, etc.). Block here until the
+# apps are actually reachable, so there's no "connection refused" window.
+echo "waiting for the apps to become reachable on ${SERVER_IP}:80 ..."
+for i in $(seq 60); do
+  if curl -s -o /dev/null "http://${SERVER_IP}"; then
+    echo "ingress is serving; cluster ready"
+    break
+  fi
+  sleep 3
+done
