@@ -12,8 +12,6 @@ curl -sfL https://get.k3s.io | \
   INSTALL_K3S_EXEC="--node-ip=${SERVER_IP} --flannel-iface=${IFACE} --write-kubeconfig-mode=644" \
   sh -
 
-# Apply manifests with kubectl (NOT the auto-deploy folder, which
-# silently drops malformed fields instead of reporting them).
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 until kubectl get nodes >/dev/null 2>&1; do sleep 2; done
 kubectl apply -f /vagrant/confs/
