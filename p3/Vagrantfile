@@ -13,8 +13,6 @@ Vagrant.configure("2") do |config|
 		server.vm.provider "virtualbox" do |vb|
 			vb.name = "#{LOGIN}S"
 			vb.cpus = 2
-			# Heavier than p2: Docker + a K3d cluster (K3s in a container)
-			# + Argo CD (~6 pods). 1024 MB will swap-thrash here.
 			vb.memory = 2048
 		end
 
