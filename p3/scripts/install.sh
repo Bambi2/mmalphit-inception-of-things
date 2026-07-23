@@ -2,7 +2,7 @@
 set -e
 
 apt-get update -y
-apt-get install -y curl ca-certificates
+apt-get install -y curl
 
 curl -fsSL https://get.docker.com | sh
 
