@@ -12,5 +12,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 
 kubectl -n argocd rollout status deployment/argocd-server --timeout=300s
 
+kubectl apply -f /vagrant/confs/application.yaml
+
 kubectl get ns
 kubectl get pods -n argocd
