@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: playground
+  name: app
   namespace: dev
   labels:
-    app: playground
+    app: app
 spec:
   replicas: 1
 
   selector:
     matchLabels:
-      app: playground
+      app: app
 
   template:
     metadata:
       labels:
-        app: playground
+        app: app
 
     spec:
       securityContext:
@@ -23,13 +23,13 @@ spec:
         runAsUser: 65532
 
       containers:
-        - name: playground
+        - name: app
           image: genegrigorian/mmalphit-inception-of-things-app:v1
           ports:
             - name: http
               containerPort: 8888
           env:
             - name: APP_NAME
-              value: playground
+              value: app
             - name: PORT
               value: "8888"
