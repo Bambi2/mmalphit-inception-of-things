@@ -8,7 +8,7 @@ until kubectl get nodes >/dev/null 2>&1; do sleep 2; done
 kubectl create namespace argocd
 kubectl create namespace dev
 
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl apply -n argocd --server-side -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 kubectl -n argocd rollout status deployment/argocd-server --timeout=300s
 
