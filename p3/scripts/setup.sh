@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
-
 k3d cluster create iot -p "8888:8888@loadbalancer"
 
 until kubectl get nodes >/dev/null 2>&1; do sleep 2; done
@@ -14,4 +12,4 @@ kubectl apply -n argocd --server-side -f https://raw.githubusercontent.com/argop
 
 kubectl -n argocd rollout status deployment/argocd-server --timeout=300s
 
-kubectl apply -f "$SCRIPT_DIR/../confs/application.yaml"
+kubectl apply -f /home/mmalphit/p3/confs/application.yaml
