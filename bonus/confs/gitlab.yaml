@@ -63,15 +63,16 @@ spec:
               mountPath: /var/log/gitlab
               subPath: logs
 
-          # GitLab takes 5-10 minutes to boot. failureThreshold * periodSeconds
-          # gives it ~15 minutes before the rollout is considered failed.
+          # GitLab takes 5-10 minutes to boot on real hardware, far longer
+          # under emulation. failureThreshold * periodSeconds allows ~30
+          # minutes; it passes as soon as GitLab is actually up.
           readinessProbe:
             httpGet:
               path: /-/health
               port: http
             initialDelaySeconds: 120
             periodSeconds: 15
-            failureThreshold: 60
+            failureThreshold: 120
 
       volumes:
         - name: gitlab

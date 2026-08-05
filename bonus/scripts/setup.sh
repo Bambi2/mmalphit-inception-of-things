@@ -17,4 +17,4 @@ kubectl apply -n argocd --server-side -f https://raw.githubusercontent.com/argop
 
 kubectl -n argocd rollout status deployment/argocd-server --timeout=300s
 
-kubectl -n gitlab rollout status deployment/gitlab --timeout=900s
+kubectl -n gitlab rollout status deployment/gitlab --timeout=1800s
