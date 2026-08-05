@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: dev
+  labels:
+    app: app
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: app
+
+  template:
+    metadata:
+      labels:
+        app: app
+
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+
+      containers:
+        - name: app
+          image: genegrigorian/mmalphit-inception-of-things-app:v1
+          ports:
+            - name: http
+              containerPort: 8888
+          env:
+            - name: APP_NAME
+              value: app
+            - name: PORT
+              value: "8888"

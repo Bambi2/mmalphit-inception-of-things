@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlab
+  namespace: gitlab
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab
+  namespace: gitlab
+  labels:
+    app: gitlab
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: gitlab
+
+  template:
+    metadata:
+      labels:
+        app: gitlab
+
+    spec:
+      containers:
+        - name: gitlab
+          image: gitlab/gitlab-ce:latest
+          ports:
+            - name: http
+              containerPort: 80
+
+          env:
+            # external_url must match how BOTH Argo CD (in-cluster DNS) and
+            # the browser (via /etc/hosts -> 127.0.0.1) reach GitLab, or
+            # GitLab issues redirects to an unreachable host.
+            # The rest trims memory so GitLab fits in ~4Gi.
+            - name: GITLAB_OMNIBUS_CONFIG
+              value: |
+                external_url 'http://gitlab.gitlab.svc.cluster.local'
+                prometheus_monitoring['enable'] = false
+                registry['enable'] = false
+                gitlab_pages['enable'] = false
+                puma['worker_processes'] = 2
+                sidekiq['max_concurrency'] = 5
+
+          volumeMounts:
+            - name: gitlab
+              mountPath: /var/opt/gitlab
+              subPath: data
+            - name: gitlab
+              mountPath: /etc/gitlab
+              subPath: config
+            - name: gitlab
+              mountPath: /var/log/gitlab
+              subPath: logs
+
+          # GitLab takes 5-10 minutes to boot. failureThreshold * periodSeconds
+          # gives it ~15 minutes before the rollout is considered failed.
+          readinessProbe:
+            httpGet:
+              path: /-/health
+              port: http
+            initialDelaySeconds: 120
+            periodSeconds: 15
+            failureThreshold: 60
+
+      volumes:
+        - name: gitlab
+          persistentVolumeClaim:
+            claimName: gitlab
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab
+  namespace: gitlab
+spec:
+  type: LoadBalancer
+  selector:
+    app: gitlab
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
