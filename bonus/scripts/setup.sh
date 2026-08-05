@@ -15,6 +15,6 @@ kubectl apply -f /home/mmalphit/bonus/confs/gitlab.yaml
 
 kubectl apply -n argocd --server-side -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-kubectl -n argocd rollout status deployment/argocd-server --timeout=300s
+kubectl -n argocd rollout status deployment/argocd-server --timeout=900s
 
 kubectl -n gitlab rollout status deployment/gitlab --timeout=1800s
