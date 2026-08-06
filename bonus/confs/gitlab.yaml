@@ -51,6 +51,7 @@ spec:
                 gitlab_pages['enable'] = false
                 puma['worker_processes'] = 2
                 sidekiq['max_concurrency'] = 5
+                gitlab_rails['monitoring_whitelist'] = ['0.0.0.0/0']
 
           volumeMounts:
             - name: gitlab
@@ -63,12 +64,15 @@ spec:
               mountPath: /var/log/gitlab
               subPath: logs
 
-          # GitLab takes 5-10 minutes to boot on real hardware, far longer
-          # under emulation. failureThreshold * periodSeconds allows ~30
-          # minutes; it passes as soon as GitLab is actually up.
+          # Probe "/" rather than /-/health: GitLab restricts its monitoring
+          # endpoints to an IP allowlist and returns 404 to everyone else,
+          # including the kubelet. "/" returns 302 (redirect to sign-in),
+          # which counts as success for an httpGet probe.
+          # GitLab takes 5-10 minutes to boot; failureThreshold *
+          # periodSeconds allows ~30 minutes.
           readinessProbe:
             httpGet:
-              path: /-/health
+              path: /
               port: http
             initialDelaySeconds: 120
             periodSeconds: 15
