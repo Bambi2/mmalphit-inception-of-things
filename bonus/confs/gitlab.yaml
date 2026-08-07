@@ -42,15 +42,18 @@ spec:
             # external_url must match how BOTH Argo CD (in-cluster DNS) and
             # the browser (via /etc/hosts -> 127.0.0.1) reach GitLab, or
             # GitLab issues redirects to an unreachable host.
-            # The rest trims memory so GitLab fits in ~4Gi.
+            # The rest trims GitLab as hard as it goes, for a 4Gi / 1 CPU box.
+            # puma worker_processes = 0 runs Puma in single mode (no forked
+            # workers), which is the single biggest memory saving available.
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
                 external_url 'http://gitlab.gitlab.svc.cluster.local'
                 prometheus_monitoring['enable'] = false
                 registry['enable'] = false
                 gitlab_pages['enable'] = false
-                puma['worker_processes'] = 2
-                sidekiq['max_concurrency'] = 5
+                gitlab_kas['enable'] = false
+                puma['worker_processes'] = 0
+                sidekiq['max_concurrency'] = 2
                 gitlab_rails['monitoring_whitelist'] = ['0.0.0.0/0']
 
           volumeMounts:
