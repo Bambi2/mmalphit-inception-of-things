@@ -76,6 +76,10 @@ spec:
               port: http
             initialDelaySeconds: 120
             periodSeconds: 15
+            # GitLab answers in 300-800ms plus queueing; the default
+            # timeoutSeconds of 1 cancels the probe mid-request (nginx
+            # logs it as 499) and the pod never settles into Ready.
+            timeoutSeconds: 10
             failureThreshold: 120
 
       volumes:
