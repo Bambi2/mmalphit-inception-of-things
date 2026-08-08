@@ -9,7 +9,7 @@ apt-get install -y curl
 
 IFACE=$(ip -o -4 addr show | awk -v ip="$WORKER_IP" '$4 ~ "^"ip"/" {print $2; exit}')
 
-while [! -f /vagrant/confs/node-token ]; do sleep 2; done
+while [ ! -f /vagrant/confs/node-token ]; do sleep 2; done
 TOKEN=$(cat /vagrant/confs/node-token)
 
 curl -fsSL https://get.k3s.io | \
