@@ -21,6 +21,12 @@ metadata:
 spec:
   replicas: 1
 
+  # Kubernetes marks a Deployment ProgressDeadlineExceeded after this long
+  # without progress, which makes `kubectl rollout status` fail regardless
+  # of its own --timeout. The 600s default is far below GitLab's first-boot
+  # time on a small machine.
+  progressDeadlineSeconds: 3600
+
   selector:
     matchLabels:
       app: gitlab
