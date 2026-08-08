@@ -12,5 +12,3 @@ chmod +x /usr/local/bin/kubectl
 
 curl -fsSL https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
 
-curl -fsSLo /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-chmod +x /usr/local/bin/argocd
